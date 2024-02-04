@@ -1,4 +1,4 @@
-package dev.artsman.poc.product;
+package tech.dev.demo.product;
 
 import java.math.BigDecimal;
 
