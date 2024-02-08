@@ -1,12 +1,10 @@
 package tech.dev.demo.product;
 
 import jakarta.annotation.Nullable;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,12 +23,18 @@ class ProductController {
 	}
 
 	@GetMapping
-	ResponseEntity<List<Product>> findAll(@RequestParam @Nullable String name) {
+	ResponseEntity<List<Product>> findAll(@RequestParam @Nullable String name,
+										  @RequestParam @Nullable BigDecimal price) {
 		var filteredProducts = products;
 
         if (StringUtils.isNotBlank(name)) {
 			filteredProducts = filteredProducts.stream()
 					.filter(product -> product.name().equalsIgnoreCase(name)).toList();
+		}
+
+		if (ObjectUtils.isNotEmpty(price)) {
+			filteredProducts = filteredProducts.stream()
+					.filter(product -> product.price().equals(price)).toList();
 		}
 
 		return ResponseEntity.ok(filteredProducts);
