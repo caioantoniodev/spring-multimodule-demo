@@ -15,18 +15,19 @@ import java.util.List;
 @RestController
 class ProductController {
 
-	private List<Product> products = new ArrayList<>();
+	private final List<Product> products = new ArrayList<>();
 
 	public ProductController() {
 		var m1 = new Product("M1", new BigDecimal(3_000));
-		var iPhone = new Product("iPhone", new BigDecimal(2_000));
-		this.products = List.of(m1, iPhone);
+		var iphone = new Product("Iphone", new BigDecimal(2_000));
+		this.products.add(m1);
+		this.products.add(iphone);
 	}
 
 	@GetMapping
-	ResponseEntity<List<Product>> findAll(@RequestParam @Nullable String name,
+	ResponseEntity<List<Product>> retrieveProducts(@RequestParam @Nullable String name,
 										  @RequestParam @Nullable BigDecimal price) {
-		var filteredProducts = products;
+		var filteredProducts = this.products;
 
         if (StringUtils.isNotBlank(name)) {
 			filteredProducts = filteredProducts.stream()
@@ -42,10 +43,13 @@ class ProductController {
 	}
 
 	@PostMapping
-	ResponseEntity<?> post(@RequestBody Product product) {
-		var productsToUpdate = new ArrayList<>(products);
-		productsToUpdate.add(product);
-		products = productsToUpdate;
+	ResponseEntity<?> createProduct(@RequestBody Product product) {
+		this.products.add(product);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@DeleteMapping("{name}")
+	ResponseEntity<Boolean> removeProduct(@PathVariable String name) {
+		return ResponseEntity.ok(products.removeIf(product -> product.name().equalsIgnoreCase(name)));
 	}
 }
