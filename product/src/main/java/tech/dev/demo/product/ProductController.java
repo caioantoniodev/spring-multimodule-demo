@@ -13,7 +13,7 @@ import java.util.List;
 
 @RequestMapping("/products")
 @RestController
-class ProductController {
+public class ProductController {
 
 	private final List<Product> products = new ArrayList<>();
 
