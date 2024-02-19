@@ -1,4 +1,4 @@
-package product;
+package tech.dev.demo;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
