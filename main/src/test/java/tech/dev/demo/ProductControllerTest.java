@@ -31,4 +31,12 @@ public class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
+
+    @Test
+    public void shouldReturnListOfProductsWithNameQuery() throws Exception {
+        this.mvc.perform(get("/products?name=M1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
 }
