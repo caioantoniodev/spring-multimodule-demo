@@ -39,4 +39,12 @@ public class ProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }
+
+    @Test
+    public void shouldReturnListOfProductsWithValueQuery() throws Exception {
+        this.mvc.perform(get("/products?price=3000"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
 }
