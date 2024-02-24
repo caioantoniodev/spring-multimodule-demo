@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import tech.dev.demo.product.Product;
 import tech.dev.demo.product.ProductController;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,10 +58,17 @@ public class ProductControllerTest {
 
     @Test
     public void shouldReturnListOfProductsWithValueQuery() throws Exception {
-        this.mvc.perform(get("/products?price=3000"))
+        var expectedPrice = new BigDecimal("3000");
+
+        var mvcResult = this.mvc.perform(get(String.format("/products?price=%s", expectedPrice)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andReturn();
+
+        var products = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Product>>(){});
+        var firstProduct = products.get(0);
+
+        Assertions.assertEquals(expectedPrice, firstProduct.price());
     }
 
     @Test
