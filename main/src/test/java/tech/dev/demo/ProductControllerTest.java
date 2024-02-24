@@ -1,5 +1,6 @@
 package tech.dev.demo;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -7,7 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import tech.dev.demo.product.Product;
 import tech.dev.demo.product.ProductController;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -36,10 +42,17 @@ public class ProductControllerTest {
 
     @Test
     public void shouldReturnListOfProductsWithNameQuery() throws Exception {
-        this.mvc.perform(get("/products?name=M1"))
+        var expectedName = "M1";
+
+        var mvcResult = this.mvc.perform(get(String.format("/products?name=%s", expectedName)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andReturn();
+
+        var products = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Product>>(){});
+        var firstProduct = products.get(0);
+
+        Assertions.assertEquals(expectedName, firstProduct.name());
     }
 
     @Test
